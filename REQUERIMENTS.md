@@ -1,31 +1,25 @@
 # Assessment Requirements Checklist
 
 ## Functional
-- [ ] User authentication with roles (at least 2 distinct roles)
-- [ ] Models using Eloquent ORM with relationships (no raw queries)
-- [ ] At least one AJAX function (e.g. pagination without page reload)
-- [ ] CRUD that saves the info from the "Golf Classic Tournament 2025" post
-- [ ] Business logic in classes (Services/Actions), NOT in controllers
+- [X] User authentication with roles (at least 2 distinct roles)
+- [X] Models using Eloquent ORM with relationships (no raw queries)
+- [X] At least one AJAX function (e.g. pagination without page reload)
+- [X] CRUD that saves the info from the "Golf Classic Tournament 2025" post
+- [X] Business logic in classes (Services/Actions), NOT in controllers
 
 ## Non-functional
-- [ ] Documented code (comments, PHPDoc on key methods)
-- [ ] No AI-generated code (you must be able to explain every decision)
-- [ ] Design can be inspired by the colors/fonts of the original post
-- [ ] Use of Bootstrap or another library allowed for the front-end
+- [X] Documented code (comments, PHPDoc on key methods)
+- [X] No AI-generated code (you must be able to explain every decision)
+- [X] Design can be inspired by the colors/fonts of the original post
+- [X] Use of Bootstrap or another library allowed for the front-end
 
 ## Deliverables
 - [ ] Deployed site URL
 - [ ] Repository URL (GitHub or other)
-- [ ] Username and password for each role
-- [ ] Access to files/repo for review
-
-## Evaluation Areas (weights)
-- [ ] Structure — 20%
-- [ ] Code — 20%
-- [ ] ORM — 20%
-- [ ] Auth — 20%
-- [ ] JS Ajax — 10%
-- [ ] Design — 10%
+- [X] Username and password for each role [Admin, Regular]
+- [Admin - "password123"]
+- [Regular - "password123"]
+- [X] Access to files/repo for review
 
 ## Self-check questions
 1. **ORM (20%)** — Do you have at least one relationship (`hasMany`, `belongsTo`, etc.) between two models, or is everything in a single flat table?

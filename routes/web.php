@@ -4,6 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
+// home = the whole app basically. Everything (login, register, profile,
+// create/edit/delete event) happens on this one page via modals + fetch,
+// see resources/views/posts/show.blade.php and public.js
 Route::get('/', [PostController::class, 'show'])->name('home');
 Route::get('/api/events', [PostController::class, 'getEvents'])->name('api.events');
 

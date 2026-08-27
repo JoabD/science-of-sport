@@ -7,10 +7,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
+// Keeps the "create/update/delete an event" logic out of PostController.
+// The controller just validates (via the FormRequests), checks the policy
+// and calls one of these - all the actual work happens here.
 class PostService
 {
     /**
      * Creates a new Post with its related packages using a database transaction.
+     * Transaction matters here bc we're writing to 2 tables (posts + post_packages),
+     * dont want a post saved with half its packages if something blows up mid-loop.
      *
      * @param array $data Validated request data
      * @return Post
@@ -64,6 +69,9 @@ class PostService
                 ]);
 
                 if (isset($data['packages']) && is_array($data['packages'])) {
+                    // Not trying to diff old vs new packages, just wipe and
+                    // reinsert. Simpler and the edit form doesnt even send
+                    // packages right now anyway.
                     $post->packages()->delete();
                     $post->packages()->createMany($data['packages']);
                 }

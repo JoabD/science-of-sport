@@ -8,6 +8,10 @@ use App\Services\PostService;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 
+// Keep this controller thin - validation lives in the FormRequests, the
+// "can this user do that" check lives in PostPolicy, and the actual DB work
+// lives in PostService. If a method here starts doing real logic that's a
+// sign it should move to one of those instead.
 class PostController extends Controller
 {
     protected $postService;
@@ -17,14 +21,20 @@ class PostController extends Controller
         $this->postService = $postService;
     }
 
+    /**
+     * Landing page. All the event data is loaded after the fact via
+     * getEvents() (AJAX), this just returns the empty shell.
+     */
     public function show()
     {
         return view('posts.show');
     }
 
     /**
-     *
-    **/
+     * Paginated event list for the landing page table. Hit from JS
+     * (resources/js/public.js) on load and on every page click, no full
+     * page reload.
+     */
     public function getEvents(Request $request)
     {
         $events = Post::orderBy('event_date', 'asc')->paginate(4);
@@ -38,7 +48,10 @@ class PostController extends Controller
     }
 
     /**
-     * Packages for a single event, used by the "View Details" modal.
+     * Full event + its packages, as JSON. Used by the "View Details" modal
+     * AND by the "Edit" button to prefill the create-event form (see
+     * openEditEventModal in public.js) - didnt seem worth 2 endpoints for
+     * basically the same query.
     **/
     public function getPackages($id)
     {
@@ -52,8 +65,10 @@ class PostController extends Controller
     }
 
     /**
-     *
-    **/
+     * Admin-only, enforced in StorePostRequest::authorize() (via PostPolicy)
+     * not here - the FormRequest throws a 403 automatically before this
+     * method even runs if the check fails.
+     */
     public function store(StorePostRequest $request)
     {
         try {
@@ -66,8 +81,9 @@ class PostController extends Controller
     }
 
     /**
-     *
-    **/
+     * Same deal as store(), authorization happens inside UpdatePostRequest.
+     * $post is resolved automatically from the {post} route param.
+     */
     public function update(UpdatePostRequest $request, Post $post)
     {
         try {
@@ -80,8 +96,10 @@ class PostController extends Controller
     }
 
     /**
-     *
-    **/
+     * No FormRequest for a plain delete (nothing to validate), so the
+     * policy check has to happen manually here instead of in a request
+     * class like the other two.
+     */
     public function destroy(Post $post)
     {
         $this->authorize('delete', $post);

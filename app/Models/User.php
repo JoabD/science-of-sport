@@ -31,7 +31,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the role associated with the user.
+     * The role decides what a user can do (see PostPolicy), not what
+     * routes exist. Every user has one, nullable at the DB level only
+     * because the users migration cant guarantee a role row exists yet
+     * when it runs.
      */
     public function role()
     {

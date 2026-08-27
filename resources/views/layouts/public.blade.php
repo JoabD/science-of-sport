@@ -19,6 +19,9 @@
     // login/register, saved profile, event validation errors, etc.
     $openModal = old('form', session('open_modal'));
 @endphp
+{{-- public.js is an external file, it cant read blade vars directly, so
+     whatever it needs to know about the current user gets passed down
+     through these data attributes instead --}}
 <body
     data-logged-in="{{ auth()->check() ? '1' : '0' }}"
     data-is-admin="{{ auth()->check() && auth()->user()->can('create', \App\Models\Post::class) ? '1' : '0' }}"
