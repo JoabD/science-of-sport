@@ -1,0 +1,36 @@
+document.addEventListener(`DOMContentLoaded`,function(){t(document.body.dataset.loggedIn===`1`,document.body.dataset.isAdmin===`1`),s(),c()});function e(e){document.getElementById(`toastMessage`).innerText=e;let t=document.getElementById(`authToast`);new bootstrap.Toast(t).show()}window.showAuthToast=e;function t(e,t){let r=document.getElementById(`eventsContainer`),a=document.getElementById(`paginationList`),o=document.getElementById(`paginationNav`),s=document.getElementById(`loadingIndicator`),c=document.querySelector(`meta[name="csrf-token"]`).content;if(!r)return;let l=1,u=e=>{r.style.opacity=`0.5`,s.style.display=`block`,fetch(`/api/events?page=${e}`,{headers:{Accept:`application/json`,"X-Requested-With":`XMLHttpRequest`}}).then(e=>e.json()).then(e=>{e.success&&(d(e.data),f(e.current_page,e.last_page),l=e.current_page)}).finally(()=>{r.style.opacity=`1`,s.style.display=`none`})},d=a=>{if(r.innerHTML=``,a.length===0){r.innerHTML=`<tr><td colspan="4" class="text-center py-4 text-muted">No events found.</td></tr>`;return}a.forEach(n=>{let i=new Date(n.event_date),a=isNaN(i)?n.event_date:i.toLocaleDateString(`en-US`,{month:`short`,day:`numeric`,year:`numeric`}),o=``;e?(o=`<button class="btn btn-sm text-white shadow-sm fw-bold bg-brand-blue view-details-btn me-1" data-id="${n.id}">View Details</button>`,t&&(o+=`
+                        <button class="btn btn-sm btn-outline-secondary shadow-sm fw-bold edit-event-btn me-1" data-id="${n.id}">Edit</button>
+                        <form method="POST" action="/events/${n.id}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this event? This cannot be undone.');">
+                            <input type="hidden" name="_token" value="${c}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-outline-danger shadow-sm fw-bold">Delete</button>
+                        </form>
+                    `)):o=`<button class="btn btn-sm btn-warning shadow-sm fw-bold" onclick="showAuthToast('Please log in to view event details.')">View Details</button>`;let s=`
+                <tr>
+                    <td class="fw-bold px-4 text-nowrap event-date-cell">${a}</td>
+                    <td>
+                        <span class="fw-bold event-title-cell">${n.title}</span><br>
+                        <small class="text-muted">${n.subtitle||``}</small>
+                    </td>
+                    <td>${n.location}</td>
+                    <td class="text-center">
+                        ${o}
+                    </td>
+                </tr>
+            `;r.innerHTML+=s}),r.querySelectorAll(`.view-details-btn`).forEach(e=>{e.addEventListener(`click`,()=>n(e.dataset.id))}),r.querySelectorAll(`.edit-event-btn`).forEach(e=>{e.addEventListener(`click`,()=>i(e.dataset.id))})},f=(e,t)=>{if(a.innerHTML=``,t<=1){o.style.display=`none`;return}o.style.display=`block`,a.innerHTML+=`<li class="page-item ${e===1?`disabled`:``}"><a class="page-link" href="#" data-page="${e-1}">Previous</a></li>`;for(let n=1;n<=t;n++)a.innerHTML+=`<li class="page-item ${e===n?`active`:``}"><a class="page-link" href="#" data-page="${n}">${n}</a></li>`;a.innerHTML+=`<li class="page-item ${e===t?`disabled`:``}"><a class="page-link" href="#" data-page="${e+1}">Next</a></li>`,a.querySelectorAll(`.page-link`).forEach(e=>{e.addEventListener(`click`,function(e){if(e.preventDefault(),this.parentElement.classList.contains(`disabled`)||this.parentElement.classList.contains(`active`))return;let t=parseInt(this.getAttribute(`data-page`));isNaN(t)||u(t)})})};u(l)}function n(e){let t=document.getElementById(`eventDetailsModal`),n=document.getElementById(`eventDetailsBody`),i=new bootstrap.Modal(t);n.innerHTML=`<div class="text-center py-4"><div class="spinner-border" style="color: var(--sos-blue);" role="status"></div></div>`,i.show(),fetch(`/api/posts/${e}/packages`,{headers:{Accept:`application/json`,"X-Requested-With":`XMLHttpRequest`}}).then(e=>e.json()).then(e=>{if(!e.success){n.innerHTML=`<p class="text-danger mb-0">This event could not be loaded.</p>`;return}n.innerHTML=r(e.post,e.packages)}).catch(()=>{n.innerHTML=`<p class="text-danger mb-0">This event could not be loaded.</p>`})}function r(e,t){let n=`
+        <h4 class="text-brand-blue fw-bold">${e.title}</h4>
+        <p class="text-muted">${e.subtitle||``}</p>
+        <p>${e.overview}</p>
+    `;return t.length===0?n+`<p class="text-muted mb-0">No packages have been added to this event yet.</p>`:(n+=`<div class="row g-3 mt-2">`,t.forEach(e=>{n+=`
+            <div class="col-md-6">
+                <div class="package-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="fw-bold mb-1">${e.name}</h6>
+                        <span class="badge bg-brand-green">${e.type}</span>
+                    </div>
+                    <div class="price">$${Number(e.price).toLocaleString()}</div>
+                    ${e.capacity?`<small class="text-muted">Capacity: ${e.capacity}</small><br>`:``}
+                    ${e.description?`<p class="mt-2 mb-0 small">${e.description}</p>`:``}
+                </div>
+            </div>
+        `}),n+=`</div>`,n)}function i(e){fetch(`/api/posts/${e}/packages`,{headers:{Accept:`application/json`,"X-Requested-With":`XMLHttpRequest`}}).then(e=>e.json()).then(e=>{e.success&&a(e.post)})}function a(e){let t=document.getElementById(`createEventModal`),n=t.querySelector(`form`);n.action=`/events/${e.id}`,n.querySelector(`[name="_method"]`).value=`PUT`,n.querySelector(`[name="post_id"]`).value=e.id,n.querySelector(`#title`).value=e.title||``,n.querySelector(`#subtitle`).value=e.subtitle||``,n.querySelector(`#event_date`).value=e.event_date||``,n.querySelector(`#location`).value=e.location||``,n.querySelector(`#overview`).value=e.overview||``,t.querySelector(`#createEventModalLabel`).innerText=`Edit Event`,t.querySelector(`button[type="submit"]`).innerText=`Save Changes`,new bootstrap.Modal(t).show()}function o(){let e=document.getElementById(`createEventModal`);if(!e)return;let t=e.querySelector(`form`);t.action=t.dataset.createAction,t.querySelector(`[name="_method"]`).value=``,t.querySelector(`[name="post_id"]`).value=``,[`title`,`subtitle`,`event_date`,`location`,`overview`].forEach(e=>{let n=t.querySelector(`#${e}`);n&&(n.value=``)}),e.querySelector(`#createEventModalLabel`).innerText=`Create New Event`,e.querySelector(`button[type="submit"]`).innerText=`Save Event`}function s(){let e=document.getElementById(`createEventModal`);e&&e.addEventListener(`hidden.bs.modal`,o)}function c(){let e=document.body.dataset.openModal;if(e){if(e===`login`)new bootstrap.Modal(document.getElementById(`loginModal`)).show();else if(e===`register`)new bootstrap.Modal(document.getElementById(`registerModal`)).show();else if(e===`create-event`){let e=document.getElementById(`createEventModal`);e&&new bootstrap.Modal(e).show()}else if(e.startsWith(`profile`)){let t=document.getElementById(`profileModal`);if(!t)return;new bootstrap.Modal(t).show();let n=e.split(`-`)[1]||`info`,r=document.getElementById(`profile-${n}-tab`);r&&new bootstrap.Tab(r).show()}}}
