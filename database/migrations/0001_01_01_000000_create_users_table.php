@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            // No hardcoded default here on purpose, a fixed id like 2 for
+            // "user" only works by luck depending on seeder insert order.
+            // The "user" role is assigned explicitly on registration instead.
+            $table->foreignId('role_id')->nullable()->constrained();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

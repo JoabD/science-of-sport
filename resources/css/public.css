@@ -1,0 +1,76 @@
+/* Landing page (event directory) styles. Kept out of the blade files on purpose,
+   this used to live in a <style> tag inside layouts/public.blade.php. */
+
+:root {
+    --sos-green: #8bc34a;
+    --sos-blue: #0d47a1;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.text-brand-blue {
+    color: var(--sos-blue);
+}
+
+.bg-brand-green {
+    background-color: var(--sos-green);
+    color: white;
+}
+
+.bg-brand-blue {
+    background-color: var(--sos-blue);
+    color: white;
+}
+
+.btn-brand {
+    background-color: var(--sos-green);
+    color: white;
+    font-weight: 600;
+}
+
+.btn-brand:hover {
+    background-color: #7cb342;
+    color: white;
+}
+
+.hero-section {
+    background-color: var(--sos-blue);
+    color: white;
+    padding: 4rem 0;
+    border-bottom: 5px solid var(--sos-green);
+}
+
+/* Events table */
+.event-date-cell {
+    color: var(--sos-green);
+}
+
+.event-title-cell {
+    color: var(--sos-blue);
+}
+
+/* User dropdown in the navbar */
+.navbar .dropdown-menu form {
+    margin: 0;
+}
+
+.navbar .dropdown-menu .dropdown-item {
+    cursor: pointer;
+}
+
+/* Package cards inside the event details modal */
+.package-card {
+    border: 1px solid #e3e3e0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    height: 100%;
+}
+
+.package-card .price {
+    color: var(--sos-blue);
+    font-weight: 800;
+    font-size: 1.4rem;
+}
